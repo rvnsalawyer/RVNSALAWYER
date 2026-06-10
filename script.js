@@ -111,4 +111,40 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 5. Visitor Stat Counter Simulation (Total & Daily)
+    const visitCountEl = document.getElementById('visit-count');
+    const dailyVisitCountEl = document.getElementById('daily-visit-count');
+    
+    if (visitCountEl || dailyVisitCountEl) {
+        // --- Total Visits Counter ---
+        const totalBase = 14250;
+        let totalLocal = parseInt(localStorage.getItem('rv_nsa_visits_total') || '0');
+        totalLocal += 1;
+        localStorage.setItem('rv_nsa_visits_total', totalLocal);
+        
+        if (visitCountEl) {
+            visitCountEl.textContent = (totalBase + totalLocal).toLocaleString('th-TH');
+        }
+        
+        // --- Daily Visits Counter (Resets every 24 hours / new calendar day) ---
+        const todayStr = new Date().toDateString(); // e.g. "Wed Jun 10 2026"
+        const savedDate = localStorage.getItem('rv_nsa_visit_date');
+        
+        let dailyCount = 0;
+        if (savedDate === todayStr) {
+            dailyCount = parseInt(localStorage.getItem('rv_nsa_visits_daily') || '0');
+            dailyCount += 1;
+        } else {
+            // New day: start with a realistic base daily visitor count (e.g. random number between 95 and 145)
+            const baseDaily = Math.floor(Math.random() * (145 - 95 + 1)) + 95;
+            dailyCount = baseDaily + 1;
+            localStorage.setItem('rv_nsa_visit_date', todayStr);
+        }
+        localStorage.setItem('rv_nsa_visits_daily', dailyCount);
+        
+        if (dailyVisitCountEl) {
+            dailyVisitCountEl.textContent = dailyCount.toLocaleString('th-TH');
+        }
+    }
 });
